@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class IngresoEgresoController {
     @Autowired
     private IngresoEgresoService ingresoEgresoService;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<?> registrarIngresoEgreso(@Valid @RequestBody IngresoEgreso ingresoEgreso, BindingResult result) {
         logger.info("Ingresa a registrarIngresoEgreso()");
@@ -40,6 +42,7 @@ public class IngresoEgresoController {
         return new ResponseEntity<IngresoEgreso>(ingresoEgresoDb, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     public ResponseEntity<Iterable<IngresoEgreso>> listar() {
         logger.debug("Ingresa a listar()");
