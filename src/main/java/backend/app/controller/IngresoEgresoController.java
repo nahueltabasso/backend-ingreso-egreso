@@ -1,13 +1,18 @@
 package backend.app.controller;
 
 import backend.app.models.entity.IngresoEgreso;
+import backend.app.security.models.entity.Usuario;
 import backend.app.service.IngresoEgresoService;
+import backend.app.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +27,8 @@ public class IngresoEgresoController {
     private static final Logger logger = LoggerFactory.getLogger(IngresoEgresoController.class);
     @Autowired
     private IngresoEgresoService ingresoEgresoService;
+    @Autowired
+    private UsuarioService usuarioService;
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
@@ -33,6 +40,8 @@ public class IngresoEgresoController {
         }
         IngresoEgreso ingresoEgresoDb = null;
         try {
+            Usuario usuario = usuarioService.getUsuarioByUsername(obtenerUsernameUsuarioLogueado());
+            ingresoEgreso.setUsuario(usuario);
             ingresoEgresoDb = ingresoEgresoService.saveIngresoEgreso(ingresoEgreso);
         } catch (Exception e) {
             responseError.put("Mensaje", "Se produjo un error en el servidor");
@@ -42,13 +51,23 @@ public class IngresoEgresoController {
         return new ResponseEntity<IngresoEgreso>(ingresoEgresoDb, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<Iterable<IngresoEgreso>> listar() {
         logger.debug("Ingresa a listar()");
+        Usuario usuario = usuarioService.getUsuarioByUsername(obtenerUsernameUsuarioLogueado());
         return ResponseEntity.ok(ingresoEgresoService.findAll());
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping("/ingresos-egresos-usuario")
+    public ResponseEntity<Iterable<IngresoEgreso>> listarIngresosEgresosUsuarioLogueado() throws Exception {
+        logger.debug("Ingresa a listarIngresosEgresosUsuarioLogueado()");
+        String username = obtenerUsernameUsuarioLogueado();
+        return ResponseEntity.ok(ingresoEgresoService.findAllByUsuario(username));
+    }
+
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/detalle/{id}")
     public ResponseEntity<?> verDetalle(@PathVariable String id) {
         logger.debug("Ingresa a verDetalle()");
@@ -65,6 +84,7 @@ public class IngresoEgresoController {
 
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminarItem(@PathVariable String id) {
         logger.debug("Ingresa a eliminar");
@@ -85,5 +105,14 @@ public class IngresoEgresoController {
             errores.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
         });
         return ResponseEntity.badRequest().body(errores);
+    }
+
+    private String obtenerUsernameUsuarioLogueado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth instanceof AnonymousAuthenticationToken)) {
+            String username = auth.getName();
+            return username;
+        }
+        return null;
     }
 }

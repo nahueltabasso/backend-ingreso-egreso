@@ -1,5 +1,6 @@
 package backend.app.models.entity;
 
+import backend.app.security.models.entity.Usuario;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +15,7 @@ public class IngresoEgreso {
     @NotNull
     private Double monto;
     private String tipo;
+    private Usuario usuario;
 
     public IngresoEgreso() {}
 
@@ -47,5 +49,13 @@ public class IngresoEgreso {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

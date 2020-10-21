@@ -63,8 +63,8 @@ public class AuthController {
         return ResponseEntity.ok(authService.guardarNuevoUsuario(signUpRequest));
     }
 
-    @PostMapping("/logout")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PostMapping("/logout")
     public ResponseEntity logout() {
         logger.debug("Ingresa a logout()");
         SecurityContext securityContext = SecurityContextHolder.getContext();

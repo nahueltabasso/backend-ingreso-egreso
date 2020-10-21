@@ -10,4 +10,5 @@ public interface IngresoEgresoService {
     public List<IngresoEgreso> findAll();
     public IngresoEgreso findById(String id) throws Exception;
     public void eliminarItem(String id) throws Exception;
+    public List<IngresoEgreso> findAllByUsuario(String username) throws Exception;
 }
