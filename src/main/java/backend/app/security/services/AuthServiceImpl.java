@@ -9,6 +9,7 @@ import backend.app.security.models.repository.UsuarioRepository;
 import backend.app.security.payload.request.SignupRequest;
 import backend.app.security.payload.response.JwtResponse;
 import backend.app.security.payload.response.MessageResponse;
+import backend.app.utils.email.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,8 @@ public class AuthServiceImpl implements AuthService {
     private JwtUtils jwtUtils;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public JwtResponse autenticarUsuario(Authentication authentication) {
@@ -92,6 +94,7 @@ public class AuthServiceImpl implements AuthService {
 
         usuario.setRoles(roles);
         usuarioRepository.save(usuario);
+        emailService.sendEmailAfterRegistration(usuario.getEmail(), usuario.getUsername());
         return new MessageResponse("Usuario registrado con exito!");
     }
 }
