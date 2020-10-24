@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Document("ingresoEgreso")
 public class IngresoEgreso {
@@ -15,6 +16,7 @@ public class IngresoEgreso {
     @NotNull
     private Double monto;
     private String tipo;
+    private Date createAt;
     private Usuario usuario;
 
     public IngresoEgreso() {}
@@ -45,6 +47,14 @@ public class IngresoEgreso {
 
     public String getTipo() {
         return tipo;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
     }
 
     public void setTipo(String tipo) {
