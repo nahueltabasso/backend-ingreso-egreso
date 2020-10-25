@@ -23,6 +23,7 @@ public class IngresoEgresoControllerTest extends BaseTest {
     private static final String INGRESO_EGRESO_TIPO = "Ingreso";
     private List<IngresoEgreso> dtoList = new ArrayList<>();
     private int cantidadIngresosEgresosDb;
+    private IngresoEgreso ingresoEgresoDbTest;
 
     @Autowired
     private IngresoEgresoRepository ingresoEgresoRepository;
@@ -52,15 +53,15 @@ public class IngresoEgresoControllerTest extends BaseTest {
 
             HttpEntity<Object> entity = new HttpEntity<Object>(ingresoEgreso, headers);
             ResponseEntity<IngresoEgreso> response = restTemplate.postForEntity(url, entity, IngresoEgreso.class);
-            ingresoEgreso = response.getBody();
-            dtoList.add(ingresoEgreso);
+            ingresoEgresoDbTest = response.getBody();
+            dtoList.add(ingresoEgresoDbTest);
             Assertions.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
-            Assertions.assertNotEquals(ingresoEgreso.getId(), null);
-            Assertions.assertEquals(ingresoEgreso.getUsuario().getId(), usuario.getId());
-            Assertions.assertEquals(ingresoEgreso.getDescripcion(), INGRESO_EGRESO_DESCRIPCION);
-            Assertions.assertEquals(ingresoEgreso.getMonto(), INGRESO_EGRESO_MONTO);
-            Assertions.assertEquals(ingresoEgreso.getTipo(), INGRESO_EGRESO_TIPO);
-            Assertions.assertNotEquals(ingresoEgreso.getCreateAt(), null);
+            Assertions.assertNotEquals(ingresoEgresoDbTest.getId(), null);
+            Assertions.assertEquals(ingresoEgresoDbTest.getUsuario().getId(), usuario.getId());
+            Assertions.assertEquals(ingresoEgresoDbTest.getDescripcion(), INGRESO_EGRESO_DESCRIPCION);
+            Assertions.assertEquals(ingresoEgresoDbTest.getMonto(), INGRESO_EGRESO_MONTO);
+            Assertions.assertEquals(ingresoEgresoDbTest.getTipo(), INGRESO_EGRESO_TIPO);
+            Assertions.assertNotEquals(ingresoEgresoDbTest.getCreateAt(), null);
         } catch (HttpClientErrorException e) {
             e.printStackTrace();
         }
