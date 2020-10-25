@@ -1,12 +1,14 @@
 package backend.app.models.entity;
 
 import backend.app.security.models.entity.Usuario;
+import io.swagger.annotations.ApiModel;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+@ApiModel(description = "Detalle sobre los ingresos-egresos")
 @Document("ingresoEgreso")
 public class IngresoEgreso {
 

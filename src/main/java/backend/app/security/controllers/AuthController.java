@@ -5,6 +5,7 @@ import backend.app.security.payload.request.LoginRequest;
 import backend.app.security.payload.request.SignupRequest;
 import backend.app.security.payload.response.MessageResponse;
 import backend.app.security.services.AuthService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signin")
+    @ApiOperation(value = "Login de un usuario", notes = "Esta api valida si un usuario se puede loguear en el sistema")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         logger.debug("Ingresa a login()");
         try {
@@ -49,6 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @ApiOperation(value = "Registrar nuevo usuario", notes = "Esta api registra un nuevo usuario en el sistema")
     public ResponseEntity<?> registrarUsuario(@Valid @RequestBody SignupRequest signUpRequest) throws Exception {
         logger.debug("Ingresa a registrarUsuario()");
         // Validamos que el nombre de usuario este disponible
@@ -65,6 +68,7 @@ public class AuthController {
 
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @PostMapping("/logout")
+    @ApiOperation(value = "Logout del sistema", notes = "Esta api permite al usuario cerrar sesion")
     public ResponseEntity logout() {
         logger.debug("Ingresa a logout()");
         SecurityContext securityContext = SecurityContextHolder.getContext();

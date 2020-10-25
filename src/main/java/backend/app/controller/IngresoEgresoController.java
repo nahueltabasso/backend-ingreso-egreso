@@ -4,6 +4,7 @@ import backend.app.models.entity.IngresoEgreso;
 import backend.app.security.models.entity.Usuario;
 import backend.app.service.IngresoEgresoService;
 import backend.app.service.UsuarioService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class IngresoEgresoController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
+    @ApiOperation(value = "Registrar un Ingreso o Egreso", notes = "Esta api registra un nuevo ingreso o egreso del usuario logueado")
     public ResponseEntity<?> registrarIngresoEgreso(@Valid @RequestBody IngresoEgreso ingresoEgreso, BindingResult result) {
         logger.info("Ingresa a registrarIngresoEgreso()");
         Map<String, Object> responseError = new HashMap<String, Object>();
@@ -53,6 +55,8 @@ public class IngresoEgresoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
+    @ApiOperation(value = "Lista los ingresos o egresos de todos los usuarios",
+            notes = "Esta api lista todos los ingresos-egresos. Solo puede ser consumida por un usuario con rol ADMIN")
     public ResponseEntity<Iterable<IngresoEgreso>> listar() {
         logger.debug("Ingresa a listar()");
         Usuario usuario = usuarioService.getUsuarioByUsername(obtenerUsernameUsuarioLogueado());
@@ -61,6 +65,7 @@ public class IngresoEgresoController {
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/ingresos-egresos-usuario")
+    @ApiOperation(value = "Lista ingresos-egresos del usuario logueado", notes = "Esta api lista todos los ingreso o egreso del usuario logueado")
     public ResponseEntity<Iterable<IngresoEgreso>> listarIngresosEgresosUsuarioLogueado() throws Exception {
         logger.debug("Ingresa a listarIngresosEgresosUsuarioLogueado()");
         String username = obtenerUsernameUsuarioLogueado();
@@ -69,6 +74,7 @@ public class IngresoEgresoController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/detalle/{id}")
+    @ApiOperation(value = "Detalle Ingreso o Egreso", notes = "Esta api muestra el detalle de un ingreso o egreso del usuario logueado")
     public ResponseEntity<?> verDetalle(@PathVariable String id) {
         logger.debug("Ingresa a verDetalle()");
         Map<String, Object> responseError = new HashMap<String, Object>();
@@ -81,11 +87,11 @@ public class IngresoEgresoController {
             return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<IngresoEgreso>(ingresoEgreso, HttpStatus.OK);
-
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping("/eliminar/{id}")
+    @ApiOperation(value = "Eliminar un Ingreso o Egreso", notes = "Esta api elimina un nuevo ingreso o egreso")
     public ResponseEntity<?> eliminarItem(@PathVariable String id) {
         logger.debug("Ingresa a eliminar");
         Map<String, Object> responseError = new HashMap<String, Object>();
