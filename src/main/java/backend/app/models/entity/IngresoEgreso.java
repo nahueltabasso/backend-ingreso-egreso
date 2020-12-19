@@ -12,6 +12,9 @@ import java.util.Date;
 @Document("ingresoEgreso")
 public class IngresoEgreso {
 
+    public static final String INGRESO = "INGRESO";
+    public static final String EGRESO = "EGRESO";
+
     @Id
     private String id;
     private String descripcion;

@@ -1,16 +1,25 @@
 package backend.app.service.impl;
 
+import backend.app.models.dto.IngresoEgresoFilterDTO;
 import backend.app.models.entity.IngresoEgreso;
 import backend.app.models.repository.IngresoEgresoRepository;
 import backend.app.security.models.entity.Usuario;
 import backend.app.service.IngresoEgresoService;
 import backend.app.service.UsuarioService;
+import backend.app.utils.date.DateUtils;
 import backend.app.utils.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +32,8 @@ public class IngresoEgresoServiceImpl implements IngresoEgresoService {
     private IngresoEgresoRepository ingresoEgresoRepository;
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public IngresoEgreso saveIngresoEgreso(IngresoEgreso ingresoEgreso) throws Exception {
@@ -85,5 +96,42 @@ public class IngresoEgresoServiceImpl implements IngresoEgresoService {
         }
         List<IngresoEgreso> list = ingresoEgresoRepository.findByUsuario(usuario);
         return list;
+    }
+
+    @Override
+    public Page<IngresoEgreso> findAllPage(String username, Pageable pageable) throws Exception {
+        logger.debug("Ingresa a findAllByUsuario()");
+        Usuario usuario = usuarioService.getUsuarioByUsername(username);
+        if (usuario == null) {
+            throw new Exception("El usuario no existe");
+        }
+        Page<IngresoEgreso> dtoList = ingresoEgresoRepository.findAllByUsuarioOrderByCreateAtAsc(usuario, pageable);
+        return dtoList;
+    }
+
+    @Override
+    public List<IngresoEgreso> search(IngresoEgresoFilterDTO filterDTO) throws Exception {
+        logger.debug("Ingresa a search()");
+        List<IngresoEgreso> dtoList = new ArrayList<>();
+        Query query = new Query();
+        if (filterDTO != null) {
+            if (filterDTO.getTipo() != null && !filterDTO.getTipo().isEmpty()) {
+                if (filterDTO.getTipo().equalsIgnoreCase(IngresoEgreso.INGRESO) || filterDTO.getTipo().equalsIgnoreCase(IngresoEgreso.EGRESO)) {
+                    query.addCriteria(Criteria.where("tipo").is(filterDTO.getTipo()));
+                }
+            }
+
+            if (filterDTO.getAnio() != null) {
+                if (filterDTO.getMes() != null) {
+                    List<Date> fechas = DateUtils.getFirstDayAndLastDayByMonthAndYear(filterDTO.getAnio(), filterDTO.getMes());
+                    query.addCriteria(Criteria.where("createAt").gte(fechas.get(0)).lte(fechas.get(1)));
+                }
+            }
+
+            query.with(Sort.by(Sort.Direction.ASC, "createAt"));
+        }
+
+        dtoList = mongoTemplate.find(query, IngresoEgreso.class);
+        return dtoList;
     }
 }
