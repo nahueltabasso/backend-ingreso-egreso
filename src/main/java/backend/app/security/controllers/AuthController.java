@@ -5,6 +5,8 @@ import backend.app.security.payload.request.LoginRequest;
 import backend.app.security.payload.request.SignupRequest;
 import backend.app.security.payload.response.MessageResponse;
 import backend.app.security.services.AuthService;
+import backend.app.security.services.CaptchaService;
+import backend.app.utils.exception.ReCaptchaInvalidException;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -34,6 +37,8 @@ public class AuthController {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private CaptchaService captchaService;
 
     @PostMapping("/signin")
     @ApiOperation(value = "Login de un usuario", notes = "Esta api valida si un usuario se puede loguear en el sistema")
@@ -52,18 +57,27 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ApiOperation(value = "Registrar nuevo usuario", notes = "Esta api registra un nuevo usuario en el sistema")
-    public ResponseEntity<?> registrarUsuario(@Valid @RequestBody SignupRequest signUpRequest) throws Exception {
+    public ResponseEntity<?> registrarUsuario(@Valid @RequestBody SignupRequest signUpRequest, HttpServletRequest request) {
         logger.debug("Ingresa a registrarUsuario()");
-        // Validamos que el nombre de usuario este disponible
-        if (usuarioRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: El nombre de usuario no esta disponible!"));
-        }
+        try {
+            // Validamos que el recaptcha sea valido
+            captchaService.validaRecaptcha(signUpRequest.getRecaptcha(), request);
 
-        // Validamos que el email no exista
-        if (usuarioRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: El email ya esta usado!"));
+            // Validamos que el nombre de usuario este disponible
+            if (usuarioRepository.existsByUsername(signUpRequest.getUsername())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: El nombre de usuario no esta disponible!"));
+            }
+
+            // Validamos que el email no exista
+            if (usuarioRepository.existsByEmail(signUpRequest.getEmail())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: El email ya esta usado!"));
+            }
+            return ResponseEntity.ok(authService.guardarNuevoUsuario(signUpRequest));
+        } catch (ReCaptchaInvalidException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
-        return ResponseEntity.ok(authService.guardarNuevoUsuario(signUpRequest));
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")

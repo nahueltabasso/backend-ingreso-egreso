@@ -1,8 +1,5 @@
 package backend.app.security.payload.request;
 
-import backend.app.security.models.entity.Role;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -26,6 +23,7 @@ public class SignupRequest {
     @Size(max = 30)
     private String apellido;
     private Set<String> roles;
+    private String recaptcha;
 
     public String getUsername() {
         return username;
@@ -73,5 +71,13 @@ public class SignupRequest {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public String getRecaptcha() {
+        return recaptcha;
+    }
+
+    public void setRecaptcha(String recaptcha) {
+        this.recaptcha = recaptcha;
     }
 }
