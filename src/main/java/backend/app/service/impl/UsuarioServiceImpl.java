@@ -27,4 +27,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         return null;
     }
+
+    @Override
+    public Usuario getUsuarioByEmail(String email) {
+        logger.debug("Ingresa a getUsuarioByEmail()");
+        Optional<Usuario> opt = usuarioRepository.findByEmail(email);
+        return opt.get();
+    }
+
+    @Override
+    public Usuario save(Usuario usuario) {
+        logger.debug("Ingresa a save()");
+        return usuarioRepository.save(usuario);
+    }
+
 }

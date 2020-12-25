@@ -1,0 +1,319 @@
+{
+	"info": {
+		"_postman_id": "5d99a3a0-e74d-4d44-8282-ac7e81966d03",
+		"name": "Ingreso-Egreso-App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvdGVzdCIsImlhdCI6MTYwNzg5OTAxOCwiZXhwIjoxNjA3ODk5NjIzfQ.kTsXAKkNNOjYUFwFei-nimuMG-eXZR93HUNvKAKFcQ9NlFpI9LZsiCYV5P3F_aN0F3Pv7TqCaCxoz1cOEIQYwg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"usuariotest\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/auth/signin",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegistrarIngresoEgreso",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvdGVzdCIsImlhdCI6MTYwNjc4Mzg2NCwiZXhwIjoxNjA2Nzg0NDY5fQ.gZXrI_gXyfAMEaypBU6Zqh7qy3Mp5nARtjOMrj-i3i-euAG28QtVYesXAyt8sEnJHWYFCG2mIjvym5wxJM-NSQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"descripcion\": \"Descripcion_test\",\r\n    \"monto\": 120.0,\r\n    \"tipo\": \"INGRESO\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/ingreso-egreso/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ingreso-egreso",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegistrarCompraDolar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvdGVzdCIsImlhdCI6MTYwNzE0MDQ1NSwiZXhwIjoxNjA3MTQxMDYwfQ.meXR4srbPoptCk6z8GcQ1v8ZcmEh8gY9gmzixWHt2YWrQXuGjb-fqBI4Dm2L9Pv3vq2QcNsQU4jk3ZixU2XsNQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "   {\r\n       \"cantidadDolarCompra\": 200.0,\r\n       \"observacion\": \"Compra dolares2\",\r\n       \"tipo\": \"OFICIAL\",\r\n       \"tipoOperacion\": \"INGRESO\"\r\n   }\r\n   ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/compradolar",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"compradolar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListarOperacionesDivisas",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvdGVzdCIsImlhdCI6MTYwNjc4NzU5MSwiZXhwIjoxNjA2Nzg4MTk2fQ.hIJDK1GWt6q4JKQFegxcAcCP9uNh4qdd-psA5Ul5F0p-BRm5QhQvnp5eRcopve6nPPD_bIZRKF1riSFhfJVtmg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/compradolar/listar-operaciones",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"compradolar",
+						"listar-operaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DetalleOperacionDivisas",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvdGVzdCIsImlhdCI6MTYwNjc4NzU5MSwiZXhwIjoxNjA2Nzg4MTk2fQ.hIJDK1GWt6q4JKQFegxcAcCP9uNh4qdd-psA5Ul5F0p-BRm5QhQvnp5eRcopve6nPPD_bIZRKF1riSFhfJVtmg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/compradolar/detalle/5fc5a2d672cc857815e30482",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"compradolar",
+						"detalle",
+						"5fc5a2d672cc857815e30482"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SearchCompraDolarByFilters",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvdGVzdCIsImlhdCI6MTYwNzkxMzY4NCwiZXhwIjoxNjA3OTE0Mjg5fQ.-dDrgLECTBkhLOLOjI4ieGOpwkGMl7n2rzKa_gz608eByIGDEGm4CnLtCEu_Mjr74a_mb7ts3n6CFhh2Wa7A6Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"tipoDolar\": \"OFICIAL\",\r\n    \"tipoOperacion\": \"INGRESO\",\r\n    \"fechaDesde\": \"2020-12-03\",\r\n    \"fechaHasta\": \"2020-12-06\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/compradolar/search",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"compradolar",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SearchIngresoEgreso",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvdGVzdCIsImlhdCI6MTYwNzkxNTA0NiwiZXhwIjoxNjA3OTE1NjUxfQ.pdUAJhAKdshj2RYXJf6xFNMKlzXVw8hcBa-MC4icCqmb_224R5WBBqgoglaTsZLhzCjUci-C-feSVoha4BxEfg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"tipo\": \"INGRESO\",\r\n        \"mes\": 12,\r\n        \"anio\": 2020\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/ingreso-egreso/search",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ingreso-egreso",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ForgotPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/password/forgotPassword?email=usuariotest@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"password",
+						"forgotPassword"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "usuariotest@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ResetPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"8699981f-5379-48fb-bffe-223366c07847\",\r\n    \"oldPassword\": \"12345678\",\r\n    \"newPassword\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/password/resetpassword",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"password",
+						"resetpassword"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
