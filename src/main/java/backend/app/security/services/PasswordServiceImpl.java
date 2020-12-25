@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
-public class passwordserviceimpl implements PasswordService {
+public class PasswordServiceImpl implements PasswordService {
 
     private static Logger logger = LoggerFactory.getLogger(PasswordServiceImpl.class);
     @Autowired
