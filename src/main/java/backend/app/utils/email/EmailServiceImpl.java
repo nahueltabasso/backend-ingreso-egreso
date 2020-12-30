@@ -18,6 +18,7 @@ public class EmailServiceImpl implements EmailService {
     private JavaMailSender emailSender;
     @Value("${spring.mail.username}")
     private String emailFrom;
+    @Value("${client.application.url}")
     private String urlApplication;
 
     @Override
@@ -45,7 +46,7 @@ public class EmailServiceImpl implements EmailService {
             message.setFrom(emailFrom);
             message.setTo(usuario.getEmail());
             message.setSubject("Solicitud cambio de contraseña");
-            urlApplication = "http://localhost:4200/usuario/cambiar-password?token=" + token;
+            urlApplication = urlApplication + "/resetpassword?token=" + token;
             String body = "Ir al siguiente enlace. \n URL: " + urlApplication;
             message.setText(body);
             emailSender.send(message);

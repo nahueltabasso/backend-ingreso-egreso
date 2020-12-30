@@ -73,6 +73,10 @@ public class PasswordServiceImpl implements PasswordService {
             throw new Exception("No coincide la contraseña anterior!");
         }
 
+        if (!confirmPassword(passwordDTO.getNewPassword(), passwordDTO.getConfirmNewPassword())) {
+            throw new Exception("Las contraseñas no coinciden!");
+        }
+
         // Persistimos en la base de datos el cambio de password
         Usuario usuario = passwordResetToken.getUsuario();
         usuario.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
@@ -93,5 +97,9 @@ public class PasswordServiceImpl implements PasswordService {
 
     private boolean validOldPassword(String oldPassword, Usuario usuario) {
         return passwordEncoder.matches(oldPassword, usuario.getPassword());
+    }
+
+    private boolean confirmPassword(String newPassword, String confirmPassword) {
+        return newPassword.equalsIgnoreCase(confirmPassword);
     }
 }

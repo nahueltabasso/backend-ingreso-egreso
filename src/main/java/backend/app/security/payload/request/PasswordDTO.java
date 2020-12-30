@@ -10,6 +10,8 @@ public class PasswordDTO {
     private String oldPassword;
     @NotNull
     private String newPassword;
+    @NotNull
+    private String confirmNewPassword;
 
     public String getToken() {
         return token;
@@ -33,5 +35,13 @@ public class PasswordDTO {
 
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String confirmNewPassword) {
+        this.confirmNewPassword = confirmNewPassword;
     }
 }

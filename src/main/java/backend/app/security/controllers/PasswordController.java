@@ -22,7 +22,7 @@ public class PasswordController {
     @Autowired
     private PasswordService passwordService;
 
-    @PostMapping("/forgotPassword")
+    @PostMapping("/forgotpassword")
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String email, HttpServletRequest request) {
         logger.debug("Ingresa a forgotPassword()");
         try {
