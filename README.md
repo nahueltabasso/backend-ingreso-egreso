@@ -22,6 +22,7 @@ Para levantar el ambiente local:
 	- mvn -Dspring.profiles.active=local spring-boot:run
 	
 ### ALGUNAS FUNCIONALIDADES DEL SISTEMA
+* API REST
 * ABM de ingresos y/o egresos
 * Busquedas por filtros
 * ABM para operaciones de ahorro
@@ -38,5 +39,5 @@ Para levantar el ambiente local:
 * Test unitarios con JUnit
 
 #### USO DE APIS EXTERNAS
-Para la consulta del valor de U$D se utilizo la API public compartida por [Ramiro Castrogiovanni] (https://github.com/Castrogiovanni20)
-En el siguiente link esta el repositorio de github de la API [API-DOLAR-ARGENTINA] (https://github.com/Castrogiovanni20/api-dolar-argentina)
+Para la consulta del valor de U$D se utilizo la API public compartida por [Ramiro Castrogiovanni](https://github.com/Castrogiovanni20)
+En el siguiente link esta el repositorio de github de la API [API-DOLAR-ARGENTINA](https://github.com/Castrogiovanni20/api-dolar-argentina)
