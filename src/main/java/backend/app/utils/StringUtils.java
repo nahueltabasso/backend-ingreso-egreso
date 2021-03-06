@@ -21,4 +21,8 @@ public class StringUtils {
             return false;
         }
     }
+
+    public static boolean validaPhoneNumber(String phoneNumber) {
+        return true;
+    }
 }

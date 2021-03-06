@@ -23,10 +23,11 @@ public class PasswordController {
     private PasswordService passwordService;
 
     @PostMapping("/forgotpassword")
-    public ResponseEntity<?> forgotPassword(@RequestParam("email") String email, HttpServletRequest request) {
+    public ResponseEntity<?> forgotPassword(@RequestParam("email") String email,
+                                            @RequestParam(value = "telefono", required = false) String telefono, HttpServletRequest request) {
         logger.debug("Ingresa a forgotPassword()");
         try {
-            GenericResponse genericResponse = passwordService.requestPasswordChange(email, request);
+            GenericResponse genericResponse = passwordService.requestPasswordChange(email, telefono, request);
             return new ResponseEntity<GenericResponse>(genericResponse, HttpStatus.OK);
         } catch (Exception e) {
              return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
