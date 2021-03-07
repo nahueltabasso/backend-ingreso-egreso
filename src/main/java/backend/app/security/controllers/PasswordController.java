@@ -28,7 +28,7 @@ public class PasswordController {
         logger.debug("Ingresa a forgotPassword()");
         try {
             GenericResponse genericResponse = passwordService.requestPasswordChange(email, telefono, request);
-            return new ResponseEntity<GenericResponse>(genericResponse, HttpStatus.OK);
+            return new ResponseEntity<GenericResponse>(genericResponse, HttpStatus.ACCEPTED);
         } catch (Exception e) {
              return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }

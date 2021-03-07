@@ -49,7 +49,7 @@ public class PasswordServiceImpl implements PasswordService {
         }
 
         // Generamos el token
-        final String token = telefono == null ? UUID.randomUUID().toString() : getCodigo();
+        final String token = telefono == null || telefono.isEmpty() ? UUID.randomUUID().toString() : getCodigo();
         PasswordResetToken passwordResetToken = new PasswordResetToken();
         passwordResetToken.setUsuario(usuario);
         passwordResetToken.setToken(token);
@@ -115,7 +115,7 @@ public class PasswordServiceImpl implements PasswordService {
     private String getCodigo() {
         Random random = new Random();
         String codigo = "";
-        for (int i=0; i < 7; i++) {
+        for (int i=0; i < 8 ; i++) {
             codigo = codigo + String.valueOf(random.nextInt(10));
         }
         return codigo;

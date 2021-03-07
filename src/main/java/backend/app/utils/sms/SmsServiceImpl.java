@@ -29,8 +29,9 @@ public class SmsServiceImpl implements SmsService {
         if(!StringUtils.validaPhoneNumber(phoneNumber)) {
             throw new IllegalArgumentException("Numero telefonico [" + phoneNumber + "] invalido");
         }
+        String number = "+" + phoneNumber;
         Message message = Message.creator(
-                new PhoneNumber("+" + phoneNumber),
+                new PhoneNumber(number),
                 new PhoneNumber(TWILIO_PHONE_NUMBER),
                 body + ": " + securityCode)
                 .create();
