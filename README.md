@@ -37,6 +37,7 @@ Para levantar el ambiente local:
 * Manejo de exepciones personalizadas
 * CORS
 * Test unitarios con JUnit
+* Envio de SMS con el API de TWILIO (Cuenta de prueba)
 
 #### USO DE APIS EXTERNAS
 Para la consulta del valor de U$D se utilizo la API public compartida por [Ramiro Castrogiovanni](https://github.com/Castrogiovanni20)
