@@ -98,7 +98,7 @@ public class CompraDolarController {
         } catch (Exception e) {
             responseError.put("mensaje", "Se produjo un error en el servidor");
             responseError.put("error", e.getMessage());
-            return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<CompraDolar>(compraDolar, HttpStatus.OK);
     }
@@ -116,7 +116,7 @@ public class CompraDolarController {
             responseError.put("error", e.getMessage());
             return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     private ResponseEntity<?> validar(BindingResult result) {

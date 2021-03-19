@@ -5,6 +5,7 @@ import backend.app.models.entity.IngresoEgreso;
 import backend.app.security.models.entity.Usuario;
 import backend.app.service.IngresoEgresoService;
 import backend.app.service.UsuarioService;
+import backend.app.utils.exception.ResourceNotFoundException;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +109,7 @@ public class IngresoEgresoController {
         } catch (Exception e) {
             responseError.put("Mensaje", "Se produjo un error en el servidor");
             responseError.put("error", e.getMessage());
-            return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<IngresoEgreso>(ingresoEgreso, HttpStatus.OK);
     }
@@ -126,7 +127,7 @@ public class IngresoEgresoController {
             responseError.put("error", e.getMessage());
             return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
     private ResponseEntity<?> validar(BindingResult result) {
