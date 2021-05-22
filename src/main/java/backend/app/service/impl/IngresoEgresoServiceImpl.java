@@ -94,7 +94,7 @@ public class IngresoEgresoServiceImpl implements IngresoEgresoService {
         if (usuario == null) {
             throw new Exception("El usuario no existe");
         }
-        List<IngresoEgreso> list = ingresoEgresoRepository.findByUsuario(usuario);
+        List<IngresoEgreso> list = ingresoEgresoRepository.findByUsuarioOrderByCreateAtDesc(usuario);
         return list;
     }
 

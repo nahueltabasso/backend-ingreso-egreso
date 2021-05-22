@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IngresoEgresoRepository extends MongoRepository<IngresoEgreso, String> {
 
-    public List<IngresoEgreso> findByUsuario(Usuario usuario);
+    public List<IngresoEgreso> findByUsuarioOrderByCreateAtDesc(Usuario usuario);
     public Page<IngresoEgreso> findAllByUsuarioOrderByCreateAtAsc(Usuario usuario, Pageable pageable);
 }
 
