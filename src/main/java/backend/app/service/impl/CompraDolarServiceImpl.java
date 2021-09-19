@@ -54,7 +54,9 @@ public class CompraDolarServiceImpl implements CompraDolarService {
             throw new Exception("El tipo no puede ser nulo");
         }
 
-        if (!compraDolar.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_OFICIAL) && !compraDolar.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_LIBRE)) {
+        if (!compraDolar.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_OFICIAL)
+            && !compraDolar.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_LIBRE)
+            && !compraDolar.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_MEP)) {
             throw new Exception("Tipo de dolar no valido");
         }
 

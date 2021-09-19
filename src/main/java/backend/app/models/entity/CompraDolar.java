@@ -15,6 +15,7 @@ public class CompraDolar {
 
     public static final String DOLAR_OFICIAL = "OFICIAL";
     public static final String DOLAR_LIBRE = "LIBRE";
+    public static final String DOLAR_MEP = "MEP";
     public static final String OPERACION_INGRESO = "INGRESO";
     public static final String OPERACION_EGRESO = "EGRESO";
 
