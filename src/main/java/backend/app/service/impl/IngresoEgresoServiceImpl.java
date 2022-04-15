@@ -128,6 +128,10 @@ public class IngresoEgresoServiceImpl implements IngresoEgresoService {
                 }
             }
 
+            if (filterDTO.getUsuario() != null) {
+                query.addCriteria(Criteria.where("usuario").is(filterDTO.getUsuario()));
+            }
+
             query.with(Sort.by(Sort.Direction.ASC, "createAt"));
         }
 
