@@ -162,4 +162,10 @@ public class CompraDolarServiceImpl implements CompraDolarService {
         return compraDolarList;
     }
 
+    @Override
+    public void eliminarOperaciones(List<CompraDolar> compraDolarList) throws Exception {
+        logger.info("Ingresa a eliminarOperaciones()");
+        compraDolarRepository.deleteAll(compraDolarList);
+    }
+
 }

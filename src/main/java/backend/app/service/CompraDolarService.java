@@ -16,4 +16,5 @@ public interface CompraDolarService {
     public void eliminarOperacion(String id) throws Exception;
     public CompraDolar findById(String id) throws Exception;
     public List<CompraDolar> search(CompraDolarFilterDTO filterDTO) throws Exception;
+    public void eliminarOperaciones(List<CompraDolar> compraDolarList) throws Exception;
 }
