@@ -72,6 +72,7 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
 
     private HistoricoIngresoEgreso getHistoricoIngresoEgresoCalculado(HistoricoIngresoEgreso historicoIngresoEgreso, List<IngresoEgreso> ingresoEgresoList,
                                                                       List<CompraDolar> compraDolarList) {
+        logger.info("Ingresa a getHistoricoIngresoEgresoCalculado()");
         Double montoTotalIngreso = historicoIngresoEgreso.getMontoTotalIngreso();
         Double montoTotalEgreso = historicoIngresoEgreso.getMontoTotalEgreso();
         Double montoTotalIngresoDolar = historicoIngresoEgreso.getMontoTotalIngresoDolar();
@@ -80,59 +81,66 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
         Double montoTotalDolarLibre = historicoIngresoEgreso.getMontoTotalDolarLibre();
         Long countItemsIngreso = historicoIngresoEgreso.getItemsTotalIngreso();
         Long countItemsEgreso = historicoIngresoEgreso.getItemsTotalEgreso();
-
-        if (ingresoEgresoList.size() > 0) {
-            for (IngresoEgreso ie : ingresoEgresoList) {
-                if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.INGRESO)) {
-                    montoTotalIngreso = montoTotalIngreso + ie.getMonto();
-                    countItemsIngreso++;
-                }
-
-                if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.EGRESO)) {
-                    montoTotalEgreso = montoTotalEgreso + ie.getMonto();
-                    countItemsEgreso++;
-                }
-            }
-        }
-
-        if (compraDolarList.size() > 0) {
-            for (CompraDolar cd : compraDolarList) {
-                if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
-                    montoTotalIngresoDolar = montoTotalIngresoDolar + cd.getCantidadDolarCompra();
-                }
-
-                if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_EGRESO)) {
-                    montoTotalEgresoDolar = montoTotalEgresoDolar + cd.getCantidadDolarCompra();
-                }
-
-                if (cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_OFICIAL) || cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_MEP)) {
-                    if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
-                        montoTotalDolarOficial = montoTotalDolarOficial + cd.getCantidadDolarCompra();
+        try {
+            if (ingresoEgresoList.size() > 0) {
+                for (IngresoEgreso ie : ingresoEgresoList) {
+                    if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.INGRESO)) {
+                        montoTotalIngreso = montoTotalIngreso + ie.getMonto();
+                        countItemsIngreso++;
                     }
-                }
 
-                if (cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_LIBRE)) {
-                    if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
-                        montoTotalDolarLibre = montoTotalDolarLibre + cd.getCantidadDolarCompra();
+                    if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.EGRESO)) {
+                        montoTotalEgreso = montoTotalEgreso + ie.getMonto();
+                        countItemsEgreso++;
                     }
                 }
             }
-        }
 
-        historicoIngresoEgreso.setMontoTotalIngreso(montoTotalIngreso);
-        historicoIngresoEgreso.setMontoTotalEgreso(montoTotalEgreso);
-        historicoIngresoEgreso.setItemsTotalIngreso(countItemsIngreso);
-        historicoIngresoEgreso.setItemsTotalEgreso(countItemsEgreso);
-        historicoIngresoEgreso.setMontoTotalIngresoDolar(montoTotalIngresoDolar);
-        historicoIngresoEgreso.setMontoTotalEgresoDolar(montoTotalEgresoDolar);
-        historicoIngresoEgreso.setMontoTotalDolarOficial(montoTotalDolarOficial);
-        historicoIngresoEgreso.setMontoTotalDolarLibre(montoTotalDolarLibre);
-        historicoIngresoEgreso.setFechaUltimaModificacion(new Date());
-        historicoIngresoEgreso = historicoIngresoEgresoRepository.save(historicoIngresoEgreso);
+            if (compraDolarList.size() > 0) {
+                for (CompraDolar cd : compraDolarList) {
+                    if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
+                        montoTotalIngresoDolar = montoTotalIngresoDolar + cd.getCantidadDolarCompra();
+                    }
+
+                    if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_EGRESO)) {
+                        montoTotalEgresoDolar = montoTotalEgresoDolar + cd.getCantidadDolarCompra();
+                    }
+
+                    if (cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_OFICIAL) || cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_MEP)) {
+                        if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
+                            montoTotalDolarOficial = montoTotalDolarOficial + cd.getCantidadDolarCompra();
+                        }
+                    }
+
+                    if (cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_LIBRE)) {
+                        if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
+                            montoTotalDolarLibre = montoTotalDolarLibre + cd.getCantidadDolarCompra();
+                        }
+                    }
+                }
+            }
+
+            historicoIngresoEgreso.setMontoTotalIngreso(montoTotalIngreso);
+            historicoIngresoEgreso.setMontoTotalEgreso(montoTotalEgreso);
+            historicoIngresoEgreso.setItemsTotalIngreso(countItemsIngreso);
+            historicoIngresoEgreso.setItemsTotalEgreso(countItemsEgreso);
+            historicoIngresoEgreso.setMontoTotalIngresoDolar(montoTotalIngresoDolar);
+            historicoIngresoEgreso.setMontoTotalEgresoDolar(montoTotalEgresoDolar);
+            historicoIngresoEgreso.setMontoTotalDolarOficial(montoTotalDolarOficial);
+            historicoIngresoEgreso.setMontoTotalDolarLibre(montoTotalDolarLibre);
+            historicoIngresoEgreso.setFechaUltimaModificacion(new Date());
+            historicoIngresoEgreso = historicoIngresoEgresoRepository.save(historicoIngresoEgreso);
+
+            ingresoEgresoService.eliminarItems(ingresoEgresoList);
+            compraDolarService.eliminarOperaciones(compraDolarList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return historicoIngresoEgreso;
     }
 
     private boolean procesaHistorico(Integer anio, Integer mes, Date fechaUltimaModificacion) {
+        logger.info("Ingresa a procesaHistorico()");
         boolean procesarHistorico = true;
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(fechaUltimaModificacion);

@@ -29,7 +29,7 @@ public class HistoricoIngresoEgresoController {
     @GetMapping()
     @ApiOperation(value = "Historico de Ingresos y Egresos del usuario", notes = "Esta api registra un historico de la actividad del usuario")
     public ResponseEntity<?> getHistoricoByUsuario() {
-        logger.info("getHistoricoByUsuario()");
+        logger.info("Ingresa a getHistoricoByUsuario()");
         try {
             Usuario usuario = usuarioService.getUsuarioByUsername(AppSession.obtenerUsernameUsuarioLogueado());
             HistoricoIngresoEgreso historicoIngresoEgreso = historicoIngresoEgresoService.getHistoricoIngresoEgresoByUsuario(usuario);
