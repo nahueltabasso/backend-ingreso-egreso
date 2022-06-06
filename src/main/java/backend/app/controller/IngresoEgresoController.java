@@ -5,7 +5,7 @@ import backend.app.models.entity.IngresoEgreso;
 import backend.app.security.models.entity.Usuario;
 import backend.app.service.IngresoEgresoService;
 import backend.app.service.UsuarioService;
-import backend.app.utils.exception.ResourceNotFoundException;
+import backend.app.utils.session.AppSession;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +37,7 @@ public class IngresoEgresoController {
     @ApiOperation(value = "Lista los ingresos y egresos segun filtros", notes = "Esta api lista los ingresos y egresos segun los filtros solicitados")
     public ResponseEntity<?> search(@RequestBody IngresoEgresoFilterDTO filterDTO) throws Exception {
         logger.info("Ingresa a search()");
-        Usuario usuario = usuarioService.getUsuarioByUsername(obtenerUsernameUsuarioLogueado());
+        Usuario usuario = usuarioService.getUsuarioByUsername(AppSession.obtenerUsernameUsuarioLogueado());
         filterDTO.setUsuario(usuario);
         return ResponseEntity.ok(ingresoEgresoService.search(filterDTO));
     }
@@ -56,7 +53,7 @@ public class IngresoEgresoController {
         }
         IngresoEgreso ingresoEgresoDb = null;
         try {
-            Usuario usuario = usuarioService.getUsuarioByUsername(obtenerUsernameUsuarioLogueado());
+            Usuario usuario = usuarioService.getUsuarioByUsername(AppSession.obtenerUsernameUsuarioLogueado());
             ingresoEgreso.setUsuario(usuario);
             ingresoEgresoDb = ingresoEgresoService.saveIngresoEgreso(ingresoEgreso);
         } catch (Exception e) {
@@ -73,7 +70,7 @@ public class IngresoEgresoController {
             notes = "Esta api lista todos los ingresos-egresos. Solo puede ser consumida por un usuario con rol ADMIN")
     public ResponseEntity<Iterable<IngresoEgreso>> listar() {
         logger.debug("Ingresa a listar()");
-        Usuario usuario = usuarioService.getUsuarioByUsername(obtenerUsernameUsuarioLogueado());
+        Usuario usuario = usuarioService.getUsuarioByUsername(AppSession.obtenerUsernameUsuarioLogueado());
         return ResponseEntity.ok(ingresoEgresoService.findAll());
     }
 
@@ -82,7 +79,7 @@ public class IngresoEgresoController {
     @ApiOperation(value = "Lista ingresos-egresos del usuario logueado", notes = "Esta api lista todos los ingreso o egreso del usuario logueado")
     public ResponseEntity<Iterable<IngresoEgreso>> listarIngresosEgresosUsuarioLogueado() throws Exception {
         logger.debug("Ingresa a listarIngresosEgresosUsuarioLogueado()");
-        String username = obtenerUsernameUsuarioLogueado();
+        String username = AppSession.obtenerUsernameUsuarioLogueado();
         return ResponseEntity.ok(ingresoEgresoService.findAllByUsuario(username));
     }
 
@@ -92,7 +89,7 @@ public class IngresoEgresoController {
     public ResponseEntity<Iterable<IngresoEgreso>> listarIngresosEgresosUsuarioLogueadoPaginados(@RequestParam(name = "page", defaultValue = "0") int page,
                                                                                              @RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
         logger.debug("Ingresa a listarIngresosEgresosUsuarioLogueadoPaginados()");
-        String username = obtenerUsernameUsuarioLogueado();
+        String username = AppSession.obtenerUsernameUsuarioLogueado();
         Pageable paging = PageRequest.of(page, size);
         return ResponseEntity.ok(ingresoEgresoService.findAllPage(username, paging));
     }
@@ -138,12 +135,4 @@ public class IngresoEgresoController {
         return ResponseEntity.badRequest().body(errores);
     }
 
-    private String obtenerUsernameUsuarioLogueado() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!(auth instanceof AnonymousAuthenticationToken)) {
-            String username = auth.getName();
-            return username;
-        }
-        return null;
-    }
 }

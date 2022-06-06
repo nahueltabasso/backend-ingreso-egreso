@@ -5,6 +5,7 @@ import backend.app.models.entity.CompraDolar;
 import backend.app.security.models.entity.Usuario;
 import backend.app.service.CompraDolarService;
 import backend.app.service.UsuarioService;
+import backend.app.utils.session.AppSession;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +37,7 @@ public class CompraDolarController {
     @ApiOperation(value = "Listado de operaciones segun filtros", notes = "Esta api retorna un listado de operaciones de divisas segun los filtros")
     public ResponseEntity<?> search(@RequestBody CompraDolarFilterDTO filterDTO) throws Exception {
         logger.info("Ingresa a search()");
-        Usuario usuario = usuarioService.getUsuarioByUsername(obtenerUsernameUsuarioLogueado());
+        Usuario usuario = usuarioService.getUsuarioByUsername(AppSession.obtenerUsernameUsuarioLogueado());
         filterDTO.setUsuario(usuario);
         return ResponseEntity.ok(compraDolarService.search(filterDTO));
     }
@@ -55,7 +53,7 @@ public class CompraDolarController {
         }
         CompraDolar compraDolarDb = null;
         try {
-            Usuario usuario = usuarioService.getUsuarioByUsername(obtenerUsernameUsuarioLogueado());
+            Usuario usuario = usuarioService.getUsuarioByUsername(AppSession.obtenerUsernameUsuarioLogueado());
             compraDolar.setUsuario(usuario);
             compraDolarDb = compraDolarService.saveCompraDolar(compraDolar);
         } catch (Exception e) {
@@ -73,7 +71,7 @@ public class CompraDolarController {
                                                                    @RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
         logger.debug("Ingresa a listarOperaciones()");
         Pageable paging = PageRequest.of(page, size);
-        String username = obtenerUsernameUsuarioLogueado();
+        String username = AppSession.obtenerUsernameUsuarioLogueado();
         return ResponseEntity.ok(compraDolarService.findAllByUser(username, paging));
     }
 
@@ -82,7 +80,7 @@ public class CompraDolarController {
     @ApiOperation(value = "Lista operaciones de compra de divisas del usuario logueado", notes = "Esta api lista todas operaciones del usuario logueado")
     public ResponseEntity<Iterable<CompraDolar>> listarOperaciones() throws Exception {
         logger.debug("Ingresa a listarOperaciones()");
-        String username = obtenerUsernameUsuarioLogueado();
+        String username = AppSession.obtenerUsernameUsuarioLogueado();
         return ResponseEntity.ok(compraDolarService.findByUser(username));
     }
 
@@ -127,12 +125,4 @@ public class CompraDolarController {
         return ResponseEntity.badRequest().body(errores);
     }
 
-    private String obtenerUsernameUsuarioLogueado() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!(auth instanceof AnonymousAuthenticationToken)) {
-            String username = auth.getName();
-            return username;
-        }
-        return null;
-    }
 }
