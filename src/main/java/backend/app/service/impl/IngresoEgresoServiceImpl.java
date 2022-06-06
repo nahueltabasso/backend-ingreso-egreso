@@ -138,4 +138,10 @@ public class IngresoEgresoServiceImpl implements IngresoEgresoService {
         dtoList = mongoTemplate.find(query, IngresoEgreso.class);
         return dtoList;
     }
+
+    @Override
+    public void eliminarItems(List<IngresoEgreso> ingresoEgresoList) throws Exception {
+        logger.info("Ingresa a eliminarItems()");
+        ingresoEgresoRepository.deleteAll(ingresoEgresoList);
+    }
 }

@@ -16,4 +16,5 @@ public interface IngresoEgresoService {
     public List<IngresoEgreso> findAllByUsuario(String username) throws Exception;
     public Page<IngresoEgreso> findAllPage(String username, Pageable pageable) throws Exception;
     public List<IngresoEgreso> search(IngresoEgresoFilterDTO filterDTO) throws Exception;
+    public void eliminarItems(List<IngresoEgreso> ingresoEgresoList) throws Exception;
 }
