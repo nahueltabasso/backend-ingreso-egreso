@@ -132,7 +132,7 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
             historicoIngresoEgreso = historicoIngresoEgresoRepository.save(historicoIngresoEgreso);
 
             ingresoEgresoService.eliminarItems(ingresoEgresoList);
-            compraDolarService.eliminarOperaciones(compraDolarList);
+//            compraDolarService.eliminarOperaciones(compraDolarList);
         } catch (Exception e) {
             e.printStackTrace();
         }
