@@ -23,7 +23,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendEmailAfterRegistration(String email, String username) {
-        logger.debug("Ingresa a sendEmailAfterRegistration()");
+        logger.info("Ingresa a sendEmailAfterRegistration()");
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(emailFrom);

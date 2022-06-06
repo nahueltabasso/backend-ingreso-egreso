@@ -22,8 +22,8 @@ import java.util.List;
 public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgresoService {
 
     public static final Logger logger = LoggerFactory.getLogger(HistoricoIngresoEgresoServiceImpl.class);
-    public static final Integer MES_1 = 6;
-    public static final Integer MES_2 = 12;
+    public static final Integer MES_1 = 5;
+    public static final Integer MES_2 = 11;
     @Autowired
     private HistoricoIngresoEgresoRepository historicoIngresoEgresoRepository;
     @Autowired
@@ -53,10 +53,13 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
             // Obtenemos el mes del current_date
             Calendar calendar = new GregorianCalendar();
             calendar.setTime(new Date());
-            Integer mes = calendar.get(Calendar.YEAR);
+            Integer mes = calendar.get(Calendar.MONTH);
+            Integer anio = calendar.get(Calendar.YEAR);
 
             if (mes.equals(MES_1) || mes.equals(MES_2)) {
-                historicoIngresoEgreso = this.getHistoricoIngresoEgresoCalculado(historicoIngresoEgreso, ingresoEgresoList, compraDolarList);
+                if (procesaHistorico(anio, mes, historicoIngresoEgreso.getFechaUltimaModificacion())) {
+                    historicoIngresoEgreso = this.getHistoricoIngresoEgresoCalculado(historicoIngresoEgreso, ingresoEgresoList, compraDolarList);
+                }
                 return historicoIngresoEgreso;
             }
 
@@ -78,36 +81,40 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
         Long countItemsIngreso = historicoIngresoEgreso.getItemsTotalIngreso();
         Long countItemsEgreso = historicoIngresoEgreso.getItemsTotalEgreso();
 
-        for (IngresoEgreso ie : ingresoEgresoList) {
-            if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.INGRESO)) {
-                montoTotalIngreso = montoTotalIngreso + ie.getMonto();
-                countItemsIngreso++;
-            }
+        if (ingresoEgresoList.size() > 0) {
+            for (IngresoEgreso ie : ingresoEgresoList) {
+                if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.INGRESO)) {
+                    montoTotalIngreso = montoTotalIngreso + ie.getMonto();
+                    countItemsIngreso++;
+                }
 
-            if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.EGRESO)) {
-                montoTotalEgreso = montoTotalEgreso + ie.getMonto();
-                countItemsEgreso++;
+                if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.EGRESO)) {
+                    montoTotalEgreso = montoTotalEgreso + ie.getMonto();
+                    countItemsEgreso++;
+                }
             }
         }
 
-        for (CompraDolar cd : compraDolarList) {
-            if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
-                montoTotalIngresoDolar = montoTotalIngresoDolar + cd.getCantidadDolarCompra();
-            }
-
-            if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_EGRESO)) {
-                montoTotalEgresoDolar = montoTotalEgresoDolar + cd.getCantidadDolarCompra();
-            }
-
-            if (cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_OFICIAL) || cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_MEP)) {
+        if (compraDolarList.size() > 0) {
+            for (CompraDolar cd : compraDolarList) {
                 if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
-                    montoTotalDolarOficial = montoTotalDolarOficial + cd.getCantidadDolarCompra();
+                    montoTotalIngresoDolar = montoTotalIngresoDolar + cd.getCantidadDolarCompra();
                 }
-            }
 
-            if (cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_LIBRE)) {
-                if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
-                    montoTotalDolarLibre = montoTotalDolarLibre + cd.getCantidadDolarCompra();
+                if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_EGRESO)) {
+                    montoTotalEgresoDolar = montoTotalEgresoDolar + cd.getCantidadDolarCompra();
+                }
+
+                if (cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_OFICIAL) || cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_MEP)) {
+                    if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
+                        montoTotalDolarOficial = montoTotalDolarOficial + cd.getCantidadDolarCompra();
+                    }
+                }
+
+                if (cd.getTipo().equalsIgnoreCase(CompraDolar.DOLAR_LIBRE)) {
+                    if (cd.getTipoOperacion().equalsIgnoreCase(CompraDolar.OPERACION_INGRESO)) {
+                        montoTotalDolarLibre = montoTotalDolarLibre + cd.getCantidadDolarCompra();
+                    }
                 }
             }
         }
@@ -123,5 +130,17 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
         historicoIngresoEgreso.setFechaUltimaModificacion(new Date());
         historicoIngresoEgreso = historicoIngresoEgresoRepository.save(historicoIngresoEgreso);
         return historicoIngresoEgreso;
+    }
+
+    private boolean procesaHistorico(Integer anio, Integer mes, Date fechaUltimaModificacion) {
+        boolean procesarHistorico = true;
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(fechaUltimaModificacion);
+        Integer anioUltimaModificacion = calendar.get(Calendar.YEAR);
+        Integer mesUltimaModificacion = calendar.get(Calendar.MONTH);
+        if (anio.equals(anioUltimaModificacion) && mes.equals(mesUltimaModificacion)) {
+            return false;
+        }
+        return procesarHistorico;
     }
 }
