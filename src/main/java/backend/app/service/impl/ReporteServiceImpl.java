@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,14 +35,13 @@ public class ReporteServiceImpl implements ReporteService {
     @Override
     public void generarReporteIngresoEgreso(ReporteDTO reporteDTO, Integer periodo) {
         logger.info("Ingresa a generarReporteIngresoEgreso()");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat sdfDetalle = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Usuario usuarioDTO = reporteDTO.getUsuario();
         try {
             Document pdfDocument = new Document();
-            String pathPdf = "./resources/reporte.pdf";
+            File file = File.createTempFile("reporte_" + new Date().getTime(), ".pdf");
             PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument,
-                    new FileOutputStream(pathPdf));
+                    new FileOutputStream(file.getPath()));
             pdfDocument.open();
 
             PdfPTable table = new PdfPTable(1);
@@ -52,7 +53,8 @@ public class ReporteServiceImpl implements ReporteService {
             table.addCell(cell);
             table.addCell("Usuario: \t" + usuarioDTO.getApellido() + ", " + usuarioDTO.getNombre());
             table.addCell("Email: \t" + usuarioDTO.getEmail());
-            table.addCell("Fecha Reporte: \t" + sdf.parse(String.valueOf(new Date())));
+            String fechaFormat = sdf.format(new Date());
+            table.addCell("Fecha Reporte: \t" + fechaFormat);
             pdfDocument.add(table);
 
             PdfPTable obsTable = new PdfPTable(1);
@@ -69,7 +71,8 @@ public class ReporteServiceImpl implements ReporteService {
             table1.addCell("Tipo");
 
             for (IngresoEgreso ie : reporteDTO.getIngresoEgresoList()) {
-                table1.addCell(String.valueOf(sdfDetalle.parse(ie.getCreateAt().toString())));
+                fechaFormat = sdf.format(ie.getCreateAt());
+                table1.addCell(fechaFormat);
                 table1.addCell(ie.getDescripcion());
                 if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.INGRESO)) {
                     table1.addCell("$" + ie.getMonto());
@@ -96,7 +99,8 @@ public class ReporteServiceImpl implements ReporteService {
             table2.addCell("Pesos ($)");
             table2.addCell("Tipo Operacion");
             for (CompraDolar cd : reporteDTO.getCompraDolarList()) {
-                table2.addCell(String.valueOf(sdfDetalle.parse(cd.getCreateAt().toString())));
+                fechaFormat = sdf.format(cd.getCreateAt());
+                table2.addCell(fechaFormat);
                 table2.addCell("U$D" + cd.getCantidadDolarCompra());
                 table2.addCell(cd.getTipo());
                 table2.addCell("$" + cd.getValorDolarPeso());
@@ -109,10 +113,12 @@ public class ReporteServiceImpl implements ReporteService {
             String subject = "Reporte Ingreso - Egreso";
             String body = "Se ha actualizado el registro de Historico, se adjunta el reporte con el detalle" +
                     " de las operaciones realizadas en el periodo " + periodo;
-            emailService.sendEmailWithAttachments(usuarioDTO.getEmail(), pathPdf, subject, body);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            logger.info(subject);
+            logger.info(body);
+            emailService.sendEmailWithAttachments(usuarioDTO.getEmail(), file.getPath(), subject, body);
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

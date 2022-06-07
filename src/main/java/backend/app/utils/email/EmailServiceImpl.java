@@ -79,6 +79,7 @@ public class EmailServiceImpl implements EmailService {
             helper.addAttachment("reporte.pdf", file);
 
             emailSender.send(message);
+            logger.info("Se ha enviado el email a " + emailTo);
         } catch(MailException e) {
             logger.error("Ocurrio un error en el envio del mail {}", e);
             e.printStackTrace();
