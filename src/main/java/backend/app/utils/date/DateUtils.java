@@ -18,4 +18,10 @@ public class DateUtils {
         list.add(calendar.getTime());
         return list;
     }
+
+    public static Integer getMonthByDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.MONTH);
+    }
 }

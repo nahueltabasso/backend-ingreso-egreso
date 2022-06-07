@@ -1,5 +1,6 @@
 package backend.app.service.impl;
 
+import backend.app.models.dto.ReporteDTO;
 import backend.app.models.entity.CompraDolar;
 import backend.app.models.entity.HistoricoIngresoEgreso;
 import backend.app.models.entity.IngresoEgreso;
@@ -8,6 +9,8 @@ import backend.app.security.models.entity.Usuario;
 import backend.app.service.CompraDolarService;
 import backend.app.service.HistoricoIngresoEgresoService;
 import backend.app.service.IngresoEgresoService;
+import backend.app.service.ReporteService;
+import backend.app.utils.date.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,8 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
     private IngresoEgresoService ingresoEgresoService;
     @Autowired
     private CompraDolarService compraDolarService;
+    @Autowired
+    private ReporteService reporteService;
 
     @Override
     public HistoricoIngresoEgreso getHistoricoIngresoEgresoByUsuario(Usuario usuario) {
@@ -59,6 +64,9 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
             if (mes.equals(MES_1) || mes.equals(MES_2)) {
                 if (procesaHistorico(anio, mes, historicoIngresoEgreso.getFechaUltimaModificacion())) {
                     historicoIngresoEgreso = this.getHistoricoIngresoEgresoCalculado(historicoIngresoEgreso, ingresoEgresoList, compraDolarList);
+                    Integer periodo = this.getPeriodoForReporte();
+                    ReporteDTO reporteDTO = new ReporteDTO(historicoIngresoEgreso.getUsuario(), ingresoEgresoList, compraDolarList, historicoIngresoEgreso);
+                    reporteService.generarReporteIngresoEgreso(reporteDTO, periodo);
                 }
                 return historicoIngresoEgreso;
             }
@@ -131,7 +139,7 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
             historicoIngresoEgreso.setFechaUltimaModificacion(new Date());
             historicoIngresoEgreso = historicoIngresoEgresoRepository.save(historicoIngresoEgreso);
 
-            ingresoEgresoService.eliminarItems(ingresoEgresoList);
+//            ingresoEgresoService.eliminarItems(ingresoEgresoList);
 //            compraDolarService.eliminarOperaciones(compraDolarList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,5 +158,13 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
             return false;
         }
         return procesarHistorico;
+    }
+
+    private Integer getPeriodoForReporte() {
+        Integer mes = DateUtils.getMonthByDate(new Date());
+        if (mes >= 0 && mes <= 6) {
+            return 1;
+        }
+        return 2;
     }
 }
