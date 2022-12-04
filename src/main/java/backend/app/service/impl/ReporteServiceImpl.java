@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -36,6 +36,7 @@ public class ReporteServiceImpl implements ReporteService {
     public void generarReporteIngresoEgreso(ReporteDTO reporteDTO, Integer periodo) {
         logger.info("Ingresa a generarReporteIngresoEgreso()");
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        DecimalFormat df = new DecimalFormat("0.00");
         Usuario usuarioDTO = reporteDTO.getUsuario();
         try {
             Document pdfDocument = new Document();
@@ -59,7 +60,10 @@ public class ReporteServiceImpl implements ReporteService {
 
             PdfPTable obsTable = new PdfPTable(1);
             obsTable.setSpacingAfter(20);
-            obsTable.addCell("Listado de operaciones de Ingresos - Egresos en $");
+            cell = new PdfPCell(new Phrase("Listado de operaciones de Ingresos - Egresos en $"));
+            cell.setBackgroundColor(new Color(195, 230, 203));
+            cell.setPadding(20f);
+            obsTable.addCell(cell);
             pdfDocument.add(obsTable);
 
             PdfPTable table1 = new PdfPTable(5);
@@ -70,24 +74,29 @@ public class ReporteServiceImpl implements ReporteService {
             table1.addCell("Egreso");
             table1.addCell("Tipo");
 
-            for (IngresoEgreso ie : reporteDTO.getIngresoEgresoList()) {
-                fechaFormat = sdf.format(ie.getCreateAt());
-                table1.addCell(fechaFormat);
-                table1.addCell(ie.getDescripcion());
-                if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.INGRESO)) {
-                    table1.addCell("$" + ie.getMonto());
-                    table1.addCell("");
-                } else {
-                    table1.addCell("");
-                    table1.addCell("$" + ie.getMonto());
+            if (!reporteDTO.getIngresoEgresoList().isEmpty()) {
+                for (IngresoEgreso ie : reporteDTO.getIngresoEgresoList()) {
+                    fechaFormat = sdf.format(ie.getCreateAt());
+                    table1.addCell(fechaFormat);
+                    table1.addCell(ie.getDescripcion());
+                    if (ie.getTipo().equalsIgnoreCase(IngresoEgreso.INGRESO)) {
+                        table1.addCell("$" + df.format(ie.getMonto()));
+                        table1.addCell("");
+                    } else {
+                        table1.addCell("");
+                        table1.addCell("$" + df.format(ie.getMonto()));
+                    }
+                    table1.addCell(ie.getTipo());
                 }
-                table1.addCell(ie.getTipo());
             }
             pdfDocument.add(table1);
 
             PdfPTable obsTable1 = new PdfPTable(1);
             obsTable1.setSpacingAfter(20);
-            obsTable1.addCell("Listado de operaciones en U$D");
+            cell = new PdfPCell(new Phrase("Listado de operaciones en U$D"));
+            cell.setBackgroundColor(new Color(195, 230, 203));
+            cell.setPadding(20f);
+            obsTable1.addCell(cell);
             pdfDocument.add(obsTable1);
 
             PdfPTable table2 = new PdfPTable(6);
@@ -98,14 +107,16 @@ public class ReporteServiceImpl implements ReporteService {
             table2.addCell("Valor Dolar - Peso");
             table2.addCell("Pesos ($)");
             table2.addCell("Tipo Operacion");
-            for (CompraDolar cd : reporteDTO.getCompraDolarList()) {
-                fechaFormat = sdf.format(cd.getCreateAt());
-                table2.addCell(fechaFormat);
-                table2.addCell("U$D" + cd.getCantidadDolarCompra());
-                table2.addCell(cd.getTipo());
-                table2.addCell("$" + cd.getValorDolarPeso());
-                table2.addCell("$" + cd.getTotalPesos());
-                table2.addCell(cd.getTipoOperacion());
+            if (!reporteDTO.getCompraDolarList().isEmpty()) {
+                for (CompraDolar cd : reporteDTO.getCompraDolarList()) {
+                    fechaFormat = sdf.format(cd.getCreateAt());
+                    table2.addCell(fechaFormat);
+                    table2.addCell("U$D" + df.format(cd.getCantidadDolarCompra()));
+                    table2.addCell(cd.getTipo());
+                    table2.addCell("$" + df.format(cd.getValorDolarPeso()));
+                    table2.addCell("$" + df.format(cd.getTotalPesos()));
+                    table2.addCell(cd.getTipoOperacion());
+                }
             }
             pdfDocument.add(table2);
             pdfDocument.close();
@@ -116,6 +127,7 @@ public class ReporteServiceImpl implements ReporteService {
             logger.info(subject);
             logger.info(body);
             emailService.sendEmailWithAttachments(usuarioDTO.getEmail(), file.getPath(), subject, body);
+            if (file.exists()) file.delete();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

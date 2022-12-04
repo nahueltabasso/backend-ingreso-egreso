@@ -16,10 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgresoService {
@@ -43,11 +40,13 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
         HistoricoIngresoEgreso historicoIngresoEgreso = historicoIngresoEgresoRepository.findByUsuario(usuario);
 
         try {
-            List<IngresoEgreso> ingresoEgresoList = ingresoEgresoService.findAllByUsuario(usuario.getUsername());
-            List<CompraDolar> compraDolarList = compraDolarService.findByUser(usuario.getUsername());
+            List<IngresoEgreso> ingresoEgresoList = new ArrayList<>();
+            List<CompraDolar> compraDolarList = new ArrayList<>();
 
             // Si es historicoIngresoEgreso es null implica que es la primera vez que lo realiza
             if (historicoIngresoEgreso == null) {
+                ingresoEgresoList = ingresoEgresoService.findAllByUsuario(usuario.getUsername());
+                compraDolarList = compraDolarService.findByUser(usuario.getUsername());
                 historicoIngresoEgreso = new HistoricoIngresoEgreso();
                 historicoIngresoEgreso.setUsuario(usuario);
                 historicoIngresoEgreso.setCreateAt(new Date());
@@ -63,6 +62,8 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
 
             if (mes.equals(MES_1) || mes.equals(MES_2)) {
                 if (procesaHistorico(anio, mes, historicoIngresoEgreso.getFechaUltimaModificacion())) {
+                    ingresoEgresoList = ingresoEgresoService.findAllByUsuario(usuario.getUsername());
+                    compraDolarList = compraDolarService.findByUser(usuario.getUsername());
                     historicoIngresoEgreso = this.getHistoricoIngresoEgresoCalculado(historicoIngresoEgreso, ingresoEgresoList, compraDolarList);
                     Integer periodo = this.getPeriodoForReporte();
                     ReporteDTO reporteDTO = new ReporteDTO(historicoIngresoEgreso.getUsuario(), ingresoEgresoList, compraDolarList, historicoIngresoEgreso);
