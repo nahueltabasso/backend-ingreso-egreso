@@ -51,6 +51,9 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
                 historicoIngresoEgreso.setUsuario(usuario);
                 historicoIngresoEgreso.setCreateAt(new Date());
                 historicoIngresoEgreso = this.getHistoricoIngresoEgresoCalculado(historicoIngresoEgreso, ingresoEgresoList, compraDolarList);
+                Integer periodo = this.getPeriodoForReporte();
+                ReporteDTO reporteDTO = new ReporteDTO(historicoIngresoEgreso.getUsuario(), ingresoEgresoList, compraDolarList, historicoIngresoEgreso);
+                reporteService.generarReporteIngresoEgreso(reporteDTO, periodo);
                 return historicoIngresoEgreso;
             }
 
@@ -140,7 +143,7 @@ public class HistoricoIngresoEgresoServiceImpl implements HistoricoIngresoEgreso
             historicoIngresoEgreso.setFechaUltimaModificacion(new Date());
             historicoIngresoEgreso = historicoIngresoEgresoRepository.save(historicoIngresoEgreso);
 
-//            ingresoEgresoService.eliminarItems(ingresoEgresoList);
+            ingresoEgresoService.eliminarItems(ingresoEgresoList);
 //            compraDolarService.eliminarOperaciones(compraDolarList);
         } catch (Exception e) {
             e.printStackTrace();
