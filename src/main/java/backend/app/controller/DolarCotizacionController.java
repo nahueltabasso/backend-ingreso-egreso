@@ -22,56 +22,14 @@ public class DolarCotizacionController {
     @Autowired
     private DolarCotizacionService dolarCotizacionService;
 
-    @GetMapping("/dolaroficial")
-    public ResponseEntity<?> obtenerCotizacionDolarOficial() {
-        logger.debug("Ingresa a obtenerCotizacionDolarOficial()");
-        Map<String, Object> responseError = new HashMap<String, Object>();
-
-        try {
-            return ResponseEntity.ok(dolarCotizacionService.getDolarOficialActual());
-        } catch(HttpClientErrorException e) {
-            responseError.put("mensaje", "Se produjo un error. Contactar con el Administrador");
-            responseError.put("error", e.getMessage());
-            return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/dolarblue")
-    public ResponseEntity<?> obtenerCotizacionDolarBlue() {
-        logger.debug("Ingresa a obtenerCotizacionDolarBlue()");
-        Map<String, Object> responseError = new HashMap<String, Object>();
-
-        try {
-            return ResponseEntity.ok(dolarCotizacionService.getDolarBlueActual());
-        } catch(HttpClientErrorException e) {
-            responseError.put("mensaje", "Se produjo un error. Contactar con el Administrador");
-            responseError.put("error", e.getMessage());
-            return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/dolarsantander")
-    public ResponseEntity<?> obtenerCotizacionDolarBcoSantander() {
-        logger.debug("Ingresa a obtenerCotizacionDolarBcoSantander()");
-        Map<String, Object> responseError = new HashMap<String, Object>();
-
-        try {
-            return ResponseEntity.ok(dolarCotizacionService.getDolarBcoSantander());
-        } catch(HttpClientErrorException e) {
-            responseError.put("mensaje", "Se produjo un error. Contactar con el Administrador");
-            responseError.put("error", e.getMessage());
-            return new ResponseEntity<Map<String, Object>>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @GetMapping("/dolarcotizacion/{tipoDolar}")
-    public ResponseEntity<?> obtenerCotizacionSegunTipoDolar(@PathVariable String tipoDolar) {
-        logger.debug("Ingresa a obtenerCotizacionSegunTipoDolar()");
+    @GetMapping("/cotizacion/{tipoDolar}")
+    public ResponseEntity<?> obtenerCotizacionDolar(@PathVariable String tipoDolar) {
+        logger.debug("Ingresa a obtenerCotizacionDolar()");
         Map<String, Object> responseError = new HashMap<String, Object>();
 
         try {
-            return ResponseEntity.ok(dolarCotizacionService.getCotizacionTipoDolar(tipoDolar));
+            return ResponseEntity.ok(dolarCotizacionService.getCotizacionDolarByTipoDolar(tipoDolar));
         } catch(HttpClientErrorException e) {
             responseError.put("mensaje", "Se produjo un error. Contactar con el Administrador");
             responseError.put("error", e.getMessage());

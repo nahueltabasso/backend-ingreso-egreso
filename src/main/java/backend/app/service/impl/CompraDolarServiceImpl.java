@@ -1,7 +1,7 @@
 package backend.app.service.impl;
 
 import backend.app.models.dto.CompraDolarFilterDTO;
-import backend.app.models.dto.DolarCotizacion;
+import backend.app.models.dto.DolarCotizacionDTO;
 import backend.app.models.entity.CompraDolar;
 import backend.app.models.repository.CompraDolarRepository;
 import backend.app.security.models.entity.Usuario;
@@ -44,7 +44,8 @@ public class CompraDolarServiceImpl implements CompraDolarService {
 
         // Si el valor dolarPeso es igual a null entonces usamos el dolar oficial del Banco Nacion
         if (compraDolar.getValorDolarPeso() == null) {
-            DolarCotizacion dolarCotizacion = dolarCotizacionService.getDolarOficialActual();
+            DolarCotizacionDTO dolarCotizacion =
+                    dolarCotizacionService.getCotizacionDolarByTipoDolar(DolarCotizacionDTO.OFICIAL_KEY);
             compraDolar.setValorDolarPeso(Double.parseDouble(dolarCotizacion.getVenta()));
         }
 
