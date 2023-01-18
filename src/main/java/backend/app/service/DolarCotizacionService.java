@@ -1,11 +1,7 @@
 package backend.app.service;
 
-import backend.app.models.dto.DolarCotizacion;
+import backend.app.models.dto.DolarCotizacionDTO;
 
 public interface DolarCotizacionService {
-
-    public DolarCotizacion getDolarOficialActual();
-    public DolarCotizacion getDolarBlueActual();
-    public DolarCotizacion getDolarBcoSantander();
-    public DolarCotizacion getCotizacionTipoDolar(String tipoDolar);
+    public DolarCotizacionDTO getCotizacionDolarByTipoDolar(String tipoDolar);
 }
